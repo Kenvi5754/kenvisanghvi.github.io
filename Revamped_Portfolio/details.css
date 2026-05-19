@@ -338,15 +338,52 @@ a { color: inherit; text-decoration: none; }
 .gallery-panel:hover {
   box-shadow: var(--shadow-lg);
 }
-.gallery-panel img {
+.gallery-panel img,
+.gallery-panel video {
   height: 100%;
   width: auto;
   display: block;
   object-fit: contain;
   transition: transform 0.6s var(--ease-out-expo);
+  background: #0d0d14;
 }
-.gallery-panel:hover img {
+.gallery-panel:hover img,
+.gallery-panel:hover video {
   transform: scale(1.03);
+}
+
+.gallery-panel--pdf {
+  width: min(52vw, 640px);
+  min-width: min(85vw, 320px);
+}
+.gallery-panel--pdf iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+  background: #fff;
+}
+
+.gallery-panel--video video {
+  max-width: min(42vw, 420px);
+}
+
+.gallery-panel--has-cover {
+  position: relative;
+}
+.gallery-video-cover {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  z-index: 2;
+  transition: opacity 0.6s ease;
+  pointer-events: none;
+  background: var(--bg-card);
+}
+.gallery-video-cover.is-hidden {
+  opacity: 0;
 }
 
 /* Panel number badge */

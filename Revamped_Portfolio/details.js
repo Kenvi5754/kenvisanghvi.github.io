@@ -88,19 +88,22 @@
       ScrollTrigger.refresh();
     }
 
-    var imgs = track.querySelectorAll('img');
+    var mediaEls = track.querySelectorAll('img, video');
     var mediaPending = 0;
-    imgs.forEach(function (img) {
-      if (img.complete) return;
+    mediaEls.forEach(function (el) {
+      if (el.tagName === 'IMG' && el.complete) return;
+      if (el.tagName === 'VIDEO' && el.readyState >= 1) return;
       mediaPending += 1;
       function onMediaDone() {
-        img.removeEventListener('load', onMediaDone);
-        img.removeEventListener('error', onMediaDone);
+        el.removeEventListener('load', onMediaDone);
+        el.removeEventListener('loadedmetadata', onMediaDone);
+        el.removeEventListener('error', onMediaDone);
         mediaPending -= 1;
         if (mediaPending === 0) requestAnimationFrame(refreshGalleryScroll);
       }
-      img.addEventListener('load', onMediaDone);
-      img.addEventListener('error', onMediaDone);
+      el.addEventListener('load', onMediaDone);
+      el.addEventListener('loadedmetadata', onMediaDone);
+      el.addEventListener('error', onMediaDone);
     });
     if (mediaPending === 0) requestAnimationFrame(refreshGalleryScroll);
 
@@ -165,6 +168,57 @@
         }
       });
     });
+
+    /* Play gallery videos when in view; pause when scrolled away.
+       For panels with a cover image (.gallery-panel--has-cover), the
+       cover is shown for 2 s then fades out before the video starts. */
+    if (!reduceMotion) {
+      track.querySelectorAll('.gallery-panel--video video').forEach(function (video) {
+        video.muted = true;
+        video.defaultMuted = true;
+        video.setAttribute('muted', '');
+        video.setAttribute('playsinline', '');
+
+        var panel = video.closest('.gallery-panel');
+        if (!panel) return;
+
+        var cover = panel.querySelector('.gallery-video-cover');
+        var coverTimer = null;
+
+        function startVideo() {
+          if (cover && !cover.classList.contains('is-hidden')) {
+            clearTimeout(coverTimer);
+            coverTimer = setTimeout(function () {
+              cover.classList.add('is-hidden');
+              video.play().catch(function () {});
+            }, 2000);
+          } else {
+            video.play().catch(function () {});
+          }
+        }
+
+        function stopVideo() {
+          clearTimeout(coverTimer);
+          video.pause();
+          if (cover) {
+            cover.classList.remove('is-hidden');
+            video.currentTime = 0;
+          }
+        }
+
+        ScrollTrigger.create({
+          scroller: root,
+          trigger: panel,
+          containerAnimation: galleryTween,
+          start: 'left 70%',
+          end: 'right 30%',
+          onEnter: startVideo,
+          onEnterBack: startVideo,
+          onLeave: stopVideo,
+          onLeaveBack: stopVideo,
+        });
+      });
+    }
 
     /* Recalculate on resize */
     window.addEventListener('resize', function () {
