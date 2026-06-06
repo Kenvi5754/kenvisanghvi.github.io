@@ -284,6 +284,7 @@
 
   // ─── Mobile Nav Toggle ─────────────────────────
   var navToggle = document.getElementById('nav-toggle');
+  var navClose = document.getElementById('nav-close');
   var nav = document.getElementById('nav');
   if (navToggle && nav && header) {
     function setMobileNavOpen(open) {
@@ -292,6 +293,9 @@
       nav.classList.toggle('is-open', open);
       header.classList.toggle('is-menu-open', open);
       document.body.classList.toggle('nav-open', open);
+      if (navClose) {
+        navClose.hidden = !open;
+      }
       if (open) {
         header.classList.remove('is-hidden');
         lenis.stop();
@@ -306,6 +310,11 @@
       var expanded = this.getAttribute('aria-expanded') === 'true';
       setMobileNavOpen(!expanded);
     });
+    if (navClose) {
+      navClose.addEventListener('click', function () {
+        setMobileNavOpen(false);
+      });
+    }
     nav.querySelectorAll('a').forEach(function (link) {
       link.addEventListener('click', function () {
         setMobileNavOpen(false);
