@@ -272,6 +272,7 @@
   var header = document.getElementById('header');
   var lastScrollY = 0;
   lenis.on('scroll', function (e) {
+    if (header && header.classList.contains('is-menu-open')) return;
     var scrollY = e.animatedScroll || 0;
     if (scrollY > 100 && scrollY > lastScrollY) {
       header.classList.add('is-hidden');
@@ -284,24 +285,30 @@
   // ─── Mobile Nav Toggle ─────────────────────────
   var navToggle = document.getElementById('nav-toggle');
   var nav = document.getElementById('nav');
-  if (navToggle && nav) {
-    navToggle.addEventListener('click', function () {
-      var expanded = this.getAttribute('aria-expanded') === 'true';
-      this.setAttribute('aria-expanded', !expanded);
-      this.classList.toggle('is-active', !expanded);
-      nav.classList.toggle('is-open', !expanded);
-      if (!expanded) {
+  if (navToggle && nav && header) {
+    function setMobileNavOpen(open) {
+      navToggle.setAttribute('aria-expanded', open);
+      navToggle.classList.toggle('is-active', open);
+      nav.classList.toggle('is-open', open);
+      header.classList.toggle('is-menu-open', open);
+      document.body.classList.toggle('nav-open', open);
+      if (open) {
+        header.classList.remove('is-hidden');
         lenis.stop();
+        document.body.style.overflow = 'hidden';
       } else {
         lenis.start();
+        document.body.style.overflow = '';
       }
+    }
+
+    navToggle.addEventListener('click', function () {
+      var expanded = this.getAttribute('aria-expanded') === 'true';
+      setMobileNavOpen(!expanded);
     });
     nav.querySelectorAll('a').forEach(function (link) {
       link.addEventListener('click', function () {
-        nav.classList.remove('is-open');
-        navToggle.classList.remove('is-active');
-        navToggle.setAttribute('aria-expanded', 'false');
-        lenis.start();
+        setMobileNavOpen(false);
       });
     });
   }

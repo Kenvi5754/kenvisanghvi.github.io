@@ -189,6 +189,11 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .nav-toggle.is-active span:nth-child(2) { opacity: 0; }
 .nav-toggle.is-active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
+body.nav-open {
+  overflow: hidden;
+  touch-action: none;
+}
+
 /* =============================================
    HERO
    ============================================= */
@@ -944,15 +949,29 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 @media (max-width: 768px) {
   .nav { display: none; }
   .nav-toggle { display: flex; }
+  .header.is-menu-open {
+    z-index: 9999;
+    background: var(--bg);
+    backdrop-filter: none;
+    border-bottom-color: var(--border);
+  }
+  .header.is-menu-open.is-hidden { transform: none; }
   .nav.is-open {
-    display: block; position: fixed;
-    top: var(--header-h); left: 0; right: 0; bottom: 0;
-    background: var(--bg); z-index: 250;
-    padding: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+    background: var(--bg);
+    padding: calc(var(--header-h) + 2rem) 2rem 2rem;
   }
   .nav.is-open ul {
-    flex-direction: column; gap: 1.5rem;
+    flex-direction: column;
+    gap: 1.5rem;
     font-size: 1.5rem;
+    width: 100%;
+    text-align: center;
   }
   .nav.is-open .nav-cta { font-size: 1rem !important; }
   .section { padding: 4rem 0; }
