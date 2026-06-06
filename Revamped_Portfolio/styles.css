@@ -193,10 +193,10 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   align-items: center;
   justify-content: center;
   padding: 0.5rem;
-  z-index: 10000;
   color: var(--text);
   border-radius: var(--radius-sm);
   transition: color var(--transition), background var(--transition);
+  -webkit-tap-highlight-color: transparent;
 }
 .nav-close:hover { color: var(--accent); }
 .nav-close:focus-visible {
@@ -972,8 +972,20 @@ body.nav-open {
   }
   .header.is-menu-open.is-hidden { transform: none; }
   .header.is-menu-open .logo { display: none; }
-  .header.is-menu-open .nav-close { display: flex; }
+  .header.is-menu-open .nav-close {
+    display: flex;
+    position: fixed;
+    top: max(0.75rem, env(safe-area-inset-top));
+    left: max(1rem, env(safe-area-inset-left));
+    z-index: 10001;
+    min-width: 44px;
+    min-height: 44px;
+  }
   .header.is-menu-open .nav-toggle { display: none; }
+  .header.is-menu-open .header-inner {
+    position: relative;
+    z-index: 10001;
+  }
   .nav.is-open {
     display: flex;
     align-items: center;

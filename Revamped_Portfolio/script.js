@@ -294,7 +294,7 @@
       header.classList.toggle('is-menu-open', open);
       document.body.classList.toggle('nav-open', open);
       if (navClose) {
-        navClose.hidden = !open;
+        navClose.setAttribute('aria-hidden', open ? 'false' : 'true');
       }
       if (open) {
         header.classList.remove('is-hidden');
